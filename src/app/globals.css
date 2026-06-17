@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-space: 'Space Grotesk', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+}
+
+html, body {
+  background-color: #050505;
+  color: #ffffff;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  font-family: var(--font-inter), sans-serif;
+  transition: background-color 0.7s ease, color 0.7s ease;
+}
+
+html.light, html.light body {
+  background-color: #F5F2EB;
+  color: #111111;
+}
+
+/* Custom Lenis smooth scroll styling */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  cursor: pointer;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Custom styles for luxury glassmorphism */
+.glassmorphism {
+  background: rgba(15, 18, 30, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glassmorphism-light {
+  background: rgba(245, 242, 235, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Cursor glow */
+.cursor-glow {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
+  position: fixed;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  transition: width 0.3s, height 0.3s;
+  mix-blend-mode: screen;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+  transition: background-color 0.7s ease;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  transition: background-color 0.7s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Light Theme Scrollbar */
+html.light ::-webkit-scrollbar-track {
+  background: #F5F2EB;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* Typography styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-space), sans-serif;
+  font-weight: 700;
+}
+
+/* Mask image style for About Me profile card */
+.profile-mask {
+  mask-image: radial-gradient(circle, black 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle, black 50%, transparent 100%);
+}
