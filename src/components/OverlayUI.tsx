@@ -42,6 +42,9 @@ export default function OverlayUI() {
   const [formName, setFormName] = React.useState("");
   const [formEmail, setFormEmail] = React.useState("");
   const [formMessage, setFormMessage] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [submitStatus, setSubmitStatus] = React.useState<"idle" | "success" | "error">("idle");
+  const [submitMessage, setSubmitMessage] = React.useState("");
 
   // Scroll to section based on card index (0 to 17)
   const scrollToSection = (index: number) => {
@@ -381,13 +384,57 @@ export default function OverlayUI() {
 
                   {activeCard.id === 8 && (
                     <form
-                      onSubmit={(e) => {
+                      onSubmit={async (e) => {
                         e.preventDefault();
-                        const subject = encodeURIComponent(`Portfolio Inquiry from ${formName}`);
-                        const body = encodeURIComponent(
-                          `Hi Niranjana,\n\n${formMessage}\n\nBest regards,\n${formName}\nEmail: ${formEmail}`
-                        );
-                        window.location.href = `mailto:mrniranjana.it@gmail.com?subject=${subject}&body=${body}`;
+                        const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+                        
+                        if (!accessKey) {
+                          // Fallback to mailto if no API key is provided
+                          const subject = encodeURIComponent(`Portfolio Inquiry from ${formName}`);
+                          const body = encodeURIComponent(
+                            `Hi Niranjana,\n\n${formMessage}\n\nBest regards,\n${formName}\nEmail: ${formEmail}`
+                          );
+                          window.location.href = `mailto:mrniranjana.it@gmail.com?subject=${subject}&body=${body}`;
+                          return;
+                        }
+
+                        setIsSubmitting(true);
+                        setSubmitStatus("idle");
+                        
+                        try {
+                          const response = await fetch("https://api.web3forms.com/submit", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                              Accept: "application/json",
+                            },
+                            body: JSON.stringify({
+                              access_key: accessKey,
+                              name: formName,
+                              email: formEmail,
+                              message: formMessage,
+                              subject: `Portfolio Inquiry from ${formName}`,
+                              from_name: "Niranjana Portfolio",
+                            }),
+                          });
+
+                          const result = await response.json();
+                          if (response.status === 200 && result.success) {
+                            setSubmitStatus("success");
+                            setSubmitMessage("Thank you! Your message has been sent successfully.");
+                            setFormName("");
+                            setFormEmail("");
+                            setFormMessage("");
+                          } else {
+                            setSubmitStatus("error");
+                            setSubmitMessage(result.message || "Something went wrong. Please try again.");
+                          }
+                        } catch (err) {
+                          setSubmitStatus("error");
+                          setSubmitMessage("Failed to connect to the email service. Please check your connection.");
+                        } finally {
+                          setIsSubmitting(false);
+                        }
                       }}
                       className="space-y-4 pt-4 border-t border-black/10 dark:border-white/5 pointer-events-auto"
                     >
@@ -456,12 +503,33 @@ export default function OverlayUI() {
                         </div>
                         <button
                           type="submit"
-                          className="w-full mt-2 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 transition-colors text-white dark:text-black py-2.5 px-6 rounded-lg font-space font-bold text-xs tracking-widest uppercase flex items-center justify-center space-x-2 pointer-events-auto"
+                          disabled={isSubmitting}
+                          className={`w-full mt-2 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 transition-colors text-white dark:text-black py-2.5 px-6 rounded-lg font-space font-bold text-xs tracking-widest uppercase flex items-center justify-center space-x-2 pointer-events-auto ${
+                            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                          }`}
                         >
-                          <span>SEND MAIL</span>
-                          <ArrowRight className="w-4 h-4" />
+                          <span>{isSubmitting ? "SENDING..." : "SEND MAIL"}</span>
+                          {!isSubmitting && <ArrowRight className="w-4 h-4" />}
                         </button>
                       </div>
+
+                      {submitStatus !== "idle" && (
+                        <div className={`text-xs p-3 rounded-lg font-inter mt-3 ${
+                          submitStatus === "success" 
+                            ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400" 
+                            : "bg-rose-500/10 border border-rose-500/20 text-rose-400"
+                        }`}>
+                          {submitMessage}
+                        </div>
+                      )}
+
+                      {!process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY && (
+                        <p className={`text-[10px] text-center mt-2 leading-relaxed transition-colors duration-700 ${
+                          isLightTheme ? "text-black/45" : "text-white/40"
+                        }`}>
+                          💡 Direct send requires a Web3Forms Access Key in `.env.local` (falling back to mailto client).
+                        </p>
+                      )}
                     </form>
                   )}
 
