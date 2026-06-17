@@ -8,6 +8,29 @@ import aboutImage from "../../1780107069499.jpg";
 import { portfolioCards } from "../data/portfolioData";
 import { usePortfolioStore } from "../store/usePortfolioStore";
 
+const getCardImageSrc = (id: number) => {
+  switch (id) {
+    case 1:
+      return "/images/cover.png";
+    case 2:
+      return aboutImage.src;
+    case 3:
+      return "/images/skills.png";
+    case 4:
+      return "/images/projects.png";
+    case 5:
+      return gdgImage.src;
+    case 6:
+      return "/images/experience.png";
+    case 7:
+      return "/images/coding.png";
+    case 8:
+      return "/images/contact.png";
+    default:
+      return "";
+  }
+};
+
 export default function OverlayUI() {
   const activeSection = usePortfolioStore((state) => state.activeSection);
   const scrollProgress = usePortfolioStore((state) => state.scrollProgress);
@@ -210,6 +233,40 @@ export default function OverlayUI() {
               onClick={() => setClickedCard(null)}
             />
 
+            {/* Left side: Large floating illustration for desktop */}
+            <div className="hidden lg:flex flex-1 items-center justify-center p-12 pointer-events-none select-none z-10">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 40 }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1, 
+                  y: [0, -12, 0]
+                }}
+                exit={{ opacity: 0, scale: 0.95, y: 40 }}
+                transition={{ 
+                  y: {
+                    repeat: Infinity,
+                    duration: 5,
+                    ease: "easeInOut"
+                  },
+                  default: {
+                    type: "spring",
+                    damping: 25,
+                    stiffness: 150,
+                    delay: 0.1
+                  }
+                }}
+                className="w-[450px] h-[450px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative bg-neutral-900/30 backdrop-blur-md"
+              >
+                <img
+                  src={getCardImageSrc(activeCard.id)}
+                  alt={activeCard.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+              </motion.div>
+            </div>
+
             {/* Sidebar drawer content */}
             <motion.div
               initial={{ x: "100%" }}
@@ -284,6 +341,16 @@ export default function OverlayUI() {
                       <img
                         src={gdgImage.src}
                         alt="GDG Inauguration PSNA"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  {activeCard.id !== 2 && activeCard.id !== 5 && (
+                    <div className="w-full h-56 my-2 rounded-xl overflow-hidden border border-black/10 dark:border-white/10 relative shadow-lg">
+                      <img
+                        src={getCardImageSrc(activeCard.id)}
+                        alt={activeCard.title}
                         className="w-full h-full object-cover"
                       />
                     </div>

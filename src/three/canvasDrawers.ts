@@ -184,15 +184,20 @@ function drawCoverLayout(
   ctx.fillText("PSNA COLLEGE OF ENG & TECH", width - padding, padding + 18);
   ctx.textAlign = "left"; // reset
 
+  // Above Title
+  ctx.fillStyle = accentColor;
+  ctx.font = '700 36px "Space Grotesk"';
+  ctx.fillText("PORTFOLIO", padding, height * 0.25);
+
   // Title (Huge text)
   ctx.fillStyle = textColor;
-  ctx.font = '800 110px "Space Grotesk"';
-  ctx.fillText("NIRANJANA", padding, height * 0.38);
+  ctx.font = '800 84px "Space Grotesk"';
+  ctx.fillText(data.title.toUpperCase(), padding, height * 0.38);
 
   // Subtitle
   ctx.fillStyle = "#6366F1"; // premium violet
   ctx.font = '700 24px "Space Grotesk"';
-  ctx.fillText("BACKEND DEVELOPER", padding, height * 0.44);
+  ctx.fillText((data.subtitle || "").toUpperCase(), padding, height * 0.44);
 
   ctx.fillStyle = "rgba(0,0,0,0.5)";
   ctx.font = '500 18px "Inter"';
@@ -201,7 +206,7 @@ function drawCoverLayout(
   // Short Bio / Intro Paragraph (aligned to the left margin)
   ctx.fillStyle = "rgba(0,0,0,0.72)";
   ctx.font = '400 19px "Inter"';
-  const bioText = "B.Tech Information Technology student with a strong foundation in Java, Data Structures, OOP, and Backend Development. Experienced in national-level hackathons and technical leadership roles.";
+  const bioText = data.description || "B.Tech Information Technology student with a strong foundation in Java, Data Structures, OOP, and Backend Development.";
   wrapText(ctx, bioText, padding, height * 0.54, width - padding * 2, 28);
 
   // Tech tags pills
@@ -1260,6 +1265,32 @@ function drawSkillLogo(ctx: CanvasRenderingContext2D, name: string, x: number, y
 
     drawCylinder(y + size * 0.22, size * 0.16);
     drawCylinder(y + size * 0.48, size * 0.16);
+  } else if (name === "React") {
+    // React atomic orbit symbol
+    ctx.strokeStyle = "#00D8FF";
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = "round";
+
+    // Draw central dot (nucleus)
+    ctx.fillStyle = "#00D8FF";
+    ctx.beginPath();
+    ctx.arc(x + size/2, y + size/2, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Draw 3 rotated ellipses
+    const drawEllipse = (angle: number) => {
+      ctx.save();
+      ctx.translate(x + size/2, y + size/2);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, size * 0.35, size * 0.12, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    drawEllipse(0);
+    drawEllipse(Math.PI / 3);
+    drawEllipse(-Math.PI / 3);
   } else if (name === "Node") {
     // Node.js green hexagon
     ctx.strokeStyle = "#339933";
@@ -1413,35 +1444,58 @@ function drawSkillsLayout(
 ) {
   ctx.fillStyle = textColor;
   ctx.font = '700 56px "Space Grotesk"';
-  ctx.fillText("TOOLS I USE", padding, height * 0.18);
+  ctx.fillText(data.title.toUpperCase(), padding, height * 0.18);
   ctx.fillStyle = accentColor;
   ctx.font = '600 20px "Space Grotesk"';
-  ctx.fillText("SOFTWARE STACK", padding, height * 0.22);
+  ctx.fillText((data.subtitle || "").toUpperCase(), padding, height * 0.22);
 
-  // Draw 3D-style software pill icons grid
+  // Draw 3D-style software pill icons list (single column to prevent overlaps)
   const startX = padding;
-  const startY = height * 0.32;
-  const rowH = 95;
-  const colW = 380; // Widen columns to prevent overlapping
+  const startY = height * 0.3;
+  const rowH = 92;
+  const cardW = width - padding * 2;
+  const cardH = rowH - 15;
 
-  const tools = [
-    { name: "Java", desc: "Core & DSA", col: "#FFA116" },
-    { name: "SQL", desc: "DBMS & Mongo", col: "#00758F" },
-    { name: "Node", desc: "REST Backend", col: "#339933" },
-    { name: "C++", desc: "Core Coding", col: "#659AD2" },
-    { name: "Git", desc: "Version Control", col: "#F05032" },
-    { name: "Cld", desc: "AWS / GCP", col: "#4285F4" },
-    { name: "Fltr", desc: "GDG Lead", col: "#02569B" },
-    { name: "DSA", desc: "250+ Solved", col: "#FF6B6B" }
-  ];
+  const details = data.details || [];
+  const tools = details.map((item) => {
+    const colonIdx = item.indexOf(":");
+    let label = item;
+    let desc = "";
+    if (colonIdx !== -1) {
+      label = item.substring(0, colonIdx).trim();
+      desc = item.substring(colonIdx + 1).trim();
+    }
+    
+    // Map label to vector icon name
+    let name = "Git";
+    let col = "#8B5CF6";
+    const lowerLabel = label.toLowerCase();
+    if (lowerLabel.includes("front")) {
+      name = "React";
+      col = "#00D8FF";
+    } else if (lowerLabel.includes("back")) {
+      name = "Node";
+      col = "#339933";
+    } else if (lowerLabel.includes("db") || lowerLabel.includes("data")) {
+      name = "SQL";
+      col = "#00758F";
+    } else if (lowerLabel.includes("cloud")) {
+      name = "Cld";
+      col = "#4285F4";
+    } else if (lowerLabel.includes("tool")) {
+      name = "Git";
+      col = "#F05032";
+    } else if (lowerLabel.includes("lang")) {
+      name = "Java";
+      col = "#FF4500";
+    }
+
+    return { name, label, desc, col };
+  });
 
   tools.forEach((tool, i) => {
-    const row = Math.floor(i / 2);
-    const col = i % 2;
-    const tx = startX + col * colW;
-    const ty = startY + row * rowH;
-    const cardW = colW - 30;
-    const cardH = rowH - 20;
+    const tx = startX;
+    const ty = startY + i * rowH;
 
     // Drawing pill/card box
     ctx.fillStyle = "rgba(0, 0, 0, 0.03)";
@@ -1454,17 +1508,18 @@ function drawSkillsLayout(
     // Draw Vector Logo icon on the left
     drawSkillLogo(ctx, tool.name, tx + 12, ty + (cardH - 46)/2, 46);
 
-    // Tool Name
+    // Tool Name / Category label
     ctx.fillStyle = textColor;
     ctx.font = 'bold 20px "Space Grotesk"';
-    ctx.fillText(tool.name, tx + 75, ty + 32);
+    ctx.fillText(tool.label, tx + 75, ty + 28);
 
     // Tool description
     ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-    ctx.font = '500 13px "Inter"';
-    ctx.fillText(tool.desc, tx + 75, ty + 53);
+    ctx.font = '500 15px "Inter"';
+    ctx.fillText(tool.desc, tx + 75, ty + 50);
   });
 }
+
 
 function drawExperienceLayout(
   ctx: CanvasRenderingContext2D,

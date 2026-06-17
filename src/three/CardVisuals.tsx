@@ -3,7 +3,9 @@
 import React, { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { Float, Text } from "@react-three/drei";
+import { Float, Text, Image as DreiImage } from "@react-three/drei";
+import aboutImageFile from "../../1780107069499.jpg";
+import gdgImageFile from "../../WhatsApp Image 2026-06-16 at 4.44.44 PM.jpeg";
 
 interface CardVisualsProps {
   index: number;
@@ -11,7 +13,123 @@ interface CardVisualsProps {
 }
 
 export default function CardVisuals({ index, active }: CardVisualsProps) {
-  return null;
+  const imageSrc = useMemo(() => {
+    switch (index) {
+      case 0: return "/images/cover.png";
+      case 1: return aboutImageFile.src; // about
+      case 2: return "/images/skills.png";
+      case 3: return "/images/projects.png";
+      case 4: return gdgImageFile.src; // leadership
+      case 5: return "/images/experience.png";
+      case 6: return "/images/coding.png";
+      case 7: return "/images/contact.png";
+      default: return null;
+    }
+  }, [index]);
+
+  // Determine positions: 2D image on one side with a clean gap from the document
+  const isImageRight = index % 2 === 0;
+  const imageX = isImageRight ? 2.4 : -2.4;
+
+  return (
+    <group>
+      {/* Floating 2D Illustration Image */}
+      {imageSrc && (
+        <Float floatIntensity={1.0} speed={1.2}>
+          <group position={[imageX, 0, 0.35]}>
+            {/* Ambient backing glow */}
+            <mesh position={[0, 0, -0.02]}>
+              <planeGeometry args={[1.5, 1.5]} />
+              <meshBasicMaterial
+                color={active ? "#8B5CF6" : "#000000"}
+                transparent
+                opacity={active ? 0.15 : 0.08}
+              />
+            </mesh>
+
+            {/* The 2D Image */}
+            <DreiImage
+              url={imageSrc}
+              transparent
+              opacity={active ? 1.0 : 0.45}
+              scale={[1.4, 1.4]}
+            />
+
+            {/* Clean border frame */}
+            <mesh position={[0, 0, 0.01]}>
+              <ringGeometry args={[1.0, 1.01, 4]} />
+              <meshBasicMaterial color="#ffffff" transparent opacity={0.25} />
+            </mesh>
+          </group>
+        </Float>
+      )}
+    </group>
+  );
+}
+
+// Wrappers to override local positions and align them dynamically
+function HeroVisualsWrapper({ x }: { x: number }) {
+  return (
+    <group position={[x - 1.8, 0, 0]}>
+      <HeroVisuals />
+    </group>
+  );
+}
+
+function AboutVisualsWrapper({ x }: { x: number }) {
+  return (
+    <group position={[x + 1.5, -0.2, 0]}>
+      <AboutVisuals />
+    </group>
+  );
+}
+
+function SkillsPlanetVisualsWrapper({ x }: { x: number }) {
+  return (
+    <group position={[x + 1.5, -0.1, 0]}>
+      <SkillsPlanetVisuals />
+    </group>
+  );
+}
+
+function AICTEVisualsWrapper({ x }: { x: number }) {
+  return (
+    <group position={[x - 1.5, -0.2, 0.1]}>
+      <AICTEVisuals />
+    </group>
+  );
+}
+
+function GDGVisualsWrapper({ x }: { x: number }) {
+  return (
+    <group position={[x + 1.5, 0, 0]}>
+      <GDGVisuals />
+    </group>
+  );
+}
+
+function LaptopVisualsWrapper({ x }: { x: number }) {
+  return (
+    <group position={[x + 1.6, 0, 0]}>
+      <LaptopVisuals />
+    </group>
+  );
+}
+
+function HologramDashboardVisualsWrapper({ x }: { x: number }) {
+  return (
+    <group position={[x + 1.5, -0.1, 0]}>
+      <HologramDashboardVisuals />
+    </group>
+  );
+}
+
+function ContactHologramVisualsWrapper({ x }: { x: number }) {
+  return (
+    <group position={[x - 1.5, 0, 0]}>
+      <ContactHologramVisuals />
+    </group>
+  );
 }
 
 function HeroVisuals() {

@@ -59,10 +59,11 @@ export const portfolioCards: PortfolioCardData[] = [
     accentColor: "#D97706", // warm amber
     description: "Combining strong core programming languages with modern web development frameworks, databases, and cloud platforms.",
     details: [
-      "Languages: Java, C, C++, SQL",
-      "Backend & Web: Node.js, REST APIs, HTML, CSS",
-      "Core Concepts: Data Structures, OOP, DBMS",
-      "Tools: Git, MongoDB, AWS (Basics), Google Cloud, Flutter"
+      "Frontend: React JS, Next.js, HTML/CSS, Tailwind CSS (v4), Three.js",
+      "Backend: Node.js, Express.js, Flask, REST APIs, Java, C++",
+      "DB: MongoDB, PostgreSQL, SQL, DBMS",
+      "Cloud: AWS (Amazon Web Services), Firebase",
+      "Tools: Git, GitHub, VS Code, Vite, Postman"
     ],
     layoutType: "skills",
   },

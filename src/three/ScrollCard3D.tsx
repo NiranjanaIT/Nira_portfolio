@@ -30,6 +30,12 @@ export default function ScrollCard3D({ data, index, position }: ScrollCard3DProp
   const [hovered, setHovered] = useState(false);
   const [gdgImgElement, setGdgImgElement] = useState<HTMLImageElement | null>(null);
   const [aboutImgElement, setAboutImgElement] = useState<HTMLImageElement | null>(null);
+  const [coverImgElement, setCoverImgElement] = useState<HTMLImageElement | null>(null);
+  const [skillsImgElement, setSkillsImgElement] = useState<HTMLImageElement | null>(null);
+  const [projectsImgElement, setProjectsImgElement] = useState<HTMLImageElement | null>(null);
+  const [experienceImgElement, setExperienceImgElement] = useState<HTMLImageElement | null>(null);
+  const [codingImgElement, setCodingImgElement] = useState<HTMLImageElement | null>(null);
+  const [contactImgElement, setContactImgElement] = useState<HTMLImageElement | null>(null);
 
   // Load images asynchronously on mount
   useEffect(() => {
@@ -46,6 +52,19 @@ export default function ScrollCard3D({ data, index, position }: ScrollCard3DProp
     img2.onload = () => {
       setAboutImgElement(img2);
     };
+
+    const loadImg = (src: string, setter: (img: HTMLImageElement) => void) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => setter(img);
+    };
+
+    loadImg("/images/cover.png", setCoverImgElement);
+    loadImg("/images/skills.png", setSkillsImgElement);
+    loadImg("/images/projects.png", setProjectsImgElement);
+    loadImg("/images/experience.png", setExperienceImgElement);
+    loadImg("/images/coding.png", setCodingImgElement);
+    loadImg("/images/contact.png", setContactImgElement);
   }, []);
 
   // Shader uniforms for bending animation
