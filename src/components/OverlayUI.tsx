@@ -226,7 +226,14 @@ export default function OverlayUI() {
       {/* 5. Expanding Glassmorphic Drawer (Slides in from the right on card click) */}
       <AnimatePresence>
         {clickedCard !== null && activeCard && (
-          <div className="fixed inset-0 w-full h-full bg-black/60 backdrop-blur-sm pointer-events-auto z-40 flex justify-end">
+          <motion.div
+            key="drawer-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 w-full h-full bg-black/60 backdrop-blur-sm pointer-events-auto z-40 flex justify-end"
+          >
             {/* Click outside to close */}
             <div
               className="absolute inset-0 w-full h-full"
@@ -242,7 +249,15 @@ export default function OverlayUI() {
                   scale: 1, 
                   y: [0, -12, 0]
                 }}
-                exit={{ opacity: 0, scale: 0.95, y: 40 }}
+                exit={{ 
+                  opacity: 0, 
+                  scale: 0.95, 
+                  y: 40,
+                  transition: {
+                    y: { repeat: 0, duration: 0.3 },
+                    default: { duration: 0.3 }
+                  }
+                }}
                 transition={{ 
                   y: {
                     repeat: Infinity,
@@ -508,7 +523,7 @@ export default function OverlayUI() {
                 </span>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

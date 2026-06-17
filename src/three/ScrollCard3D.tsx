@@ -72,12 +72,12 @@ export default function ScrollCard3D({ data, index, position }: ScrollCard3DProp
     uTime: { value: 0 }
   }), []);
 
-  // 1. Create client-side canvas for offline rendering
+  // 1. Create client-side canvas for offline rendering (2x resolution for high-DPI clarity)
   const canvas = useMemo(() => {
     if (typeof window === "undefined") return null;
     const c = document.createElement("canvas");
-    c.width = 1024;
-    c.height = 1400; // 1 : 1.36 aspect ratio
+    c.width = 2048;
+    c.height = 2800; // 2x resolution (logical: 1024x1400)
     return c;
   }, []);
 
@@ -86,7 +86,9 @@ export default function ScrollCard3D({ data, index, position }: ScrollCard3DProp
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (ctx) {
-      drawCardCanvas(ctx, data, canvas.width, canvas.height, gdgImgElement, aboutImgElement);
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // reset scale
+      ctx.scale(2, 2); // scale context by 2x for high-DPI drawing
+      drawCardCanvas(ctx, data, 1024, 1400, gdgImgElement, aboutImgElement);
       if (textureRef.current) {
         textureRef.current.needsUpdate = true;
       }
@@ -198,6 +200,10 @@ export default function ScrollCard3D({ data, index, position }: ScrollCard3DProp
               attach="map"
               args={[canvas]}
               colorSpace={THREE.SRGBColorSpace}
+              minFilter={THREE.LinearFilter}
+              magFilter={THREE.LinearFilter}
+              generateMipmaps={false}
+              anisotropy={16}
             />
           )}
         </meshStandardMaterial>
